@@ -1,35 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-export default function LoginPage() {
-  const searchParams = useSearchParams();
-  const registered = searchParams.get("registered");
+export default function RegisterPage() {
+  const router = useRouter();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+  async function handleRegister(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      callbackUrl: "/profile",
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
     });
 
+    const data = await response.json();
     setLoading(false);
 
-    // if (result?.error) {
-    //   setError("Invalid email or password.");
-    // }
+    if (!response.ok) {
+      setError(data?.error ?? data?.Error ?? "Unable to create account.");
+      return;
+    }
+
+    router.push("/login?registered=1");
   }
 
   return (
@@ -39,17 +44,11 @@ export default function LoginPage() {
           <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-500">
             Authentication
           </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight">Welcome back</h1>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight">Create account</h1>
           <p className="mt-2 text-sm text-slate-600">
-            Use this page to test your login flow end to end.
+            Register a new user to verify your signup flow.
           </p>
         </div>
-
-        {registered ? (
-          <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            Account created successfully. You can sign in now.
-          </div>
-        ) : null}
 
         {error ? (
           <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -57,7 +56,20 @@ export default function LoginPage() {
           </div>
         ) : null}
 
-        <form className="space-y-4" onSubmit={handleLogin}>
+        <form className="space-y-4" onSubmit={handleRegister}>
+          <label className="block">
+            <span className="mb-2 block text-sm font-medium text-slate-700">Name</span>
+            <input
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-200"
+              placeholder="Jane Doe"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              autoComplete="name"
+              required
+            />
+          </label>
+
           <label className="block">
             <span className="mb-2 block text-sm font-medium text-slate-700">Email</span>
             <input
@@ -75,12 +87,13 @@ export default function LoginPage() {
             <span className="mb-2 block text-sm font-medium text-slate-700">Password</span>
             <input
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-200"
-              placeholder="••••••••"
+              placeholder="At least 6 characters"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
+              minLength={6}
             />
           </label>
 
@@ -89,14 +102,14 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-slate-600">
-          Need an account?{" "}
-          <Link className="font-medium text-slate-900 underline underline-offset-4" href="/register">
-            Register
+          Already have an account?{" "}
+          <Link className="font-medium text-slate-900 underline underline-offset-4" href="/login">
+            Sign in
           </Link>
         </p>
       </div>
