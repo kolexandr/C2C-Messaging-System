@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import zod from "zod";
 
 const registerSchema = zod.object({
-  name: zod.string().min(3, "Name is required"),
+  name: zod.string().min(3, "Name is required").max(25, "Name is too long"),
   email: zod.email("Invalid email"),
   password: zod.string().min(6, "Password must be at least 6 characters")
 })

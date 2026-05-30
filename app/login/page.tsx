@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
 
@@ -19,17 +20,22 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    const callbackUrl = "/profile";
     const result = await signIn("credentials", {
+      redirect: false,
       email,
       password,
-      callbackUrl: "/profile",
+      callbackUrl,
     });
 
     setLoading(false);
 
-    // if (result?.error) {
-    //   setError("Invalid email or password.");
-    // }
+    if (!result || result.error) {
+      setError("Invalid email or password.");
+      return;
+    }
+
+    router.push(callbackUrl);
   }
 
   return (
