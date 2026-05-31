@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# C2C Messaging Marketplace
 
-## Getting Started
+A marketplace app built with Next.js, Prisma, NextAuth, Cloudinary image upload, and real-time messaging via Pusher.
 
-First, run the development server:
+## Features
+
+- Email/password authentication with protected routes
+- User dashboard for creating new listings
+- Home page with all public products and direct seller messaging
+- Profile page with user info and personal listings
+- Conversation inbox and per-conversation chat pages
+- Cloudinary file upload for listing images
+- Prisma + PostgreSQL data model for users, listings, conversations, and messages
+- Real-time chat support via Pusher
+
+## Project Structure
+
+- `app/`
+  - `page.tsx` — public marketplace home page
+  - `dashboard/page.tsx` — create new listings and upload images
+  - `profile/page.tsx` — user profile and own listings management
+  - `messages/page.tsx` — inbox for active conversations
+  - `messages/[conversationId]/page.tsx` — conversation thread page
+  - `api/` — API routes for auth, listings, conversations, and messages
+- `components/` — reusable UI components like `ProductCard`, `CreateListingForm`, `CloudinaryUpload`, and `ConversationThread`
+- `lib/` — shared helpers for Prisma, authentication, and providers
+- `prisma/schema.prisma` — database schema for `User`, `Listing`, `Conversation`, and `Message`
+
+## Environment Variables
+
+Create a `.env` file at the project root with the following variables:
+
+```dotenv
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+NEXTAUTH_SECRET="your-nextauth-secret"
+PUSHER_APP_ID="your-pusher-app-id"
+NEXT_PUBLIC_PUSHER_KEY="your-pusher-key"
+PUSHER_SECRET="your-pusher-secret"
+NEXT_PUBLIC_PUSHER_CLUSTER="your-pusher-cluster"
+```
+
+### Required values
+
+- `DATABASE_URL` — PostgreSQL connection string
+- `NEXTAUTH_SECRET` — secret for next-auth session encryption
+- `PUSHER_APP_ID`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER` — Pusher credentials for real-time messaging
+
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Generate Prisma client after schema changes:
+
+```bash
+npx prisma generate
+```
+
+Run migrations (development only):
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Pages
 
-## Learn More
+- `/` — browse all available products
+- `/login` — sign in with credentials
+- `/register` — create an account
+- `/dashboard` — authenticated listing creation and Cloudinary upload
+- `/profile` — view user info and manage your own listings
+- `/messages` — view conversation list
+- `/messages/[conversationId]` — message thread for a particular conversation
 
-To learn more about Next.js, take a look at the following resources:
+### API Endpoints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `GET /api/listings` — fetch all listings
+- `GET /api/listings?mine=1` — fetch listings created by current user
+- `POST /api/listings` — create a new listing
+- `PATCH /api/listings?id=<id>` — update listing by owner
+- `DELETE /api/listings?id=<id>` — delete listing by owner
+- `POST /api/conversations` — start or return a conversation for a listing
+- `GET /api/conversations` — fetch current user conversations
+- `POST /api/messages` — send a message in a conversation
+- `GET /api/messages?conversationId=<id>` — fetch messages for a conversation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database Schema
 
-## Deploy on Vercel
+Current Prisma models:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `User`
+- `Listing`
+- `Conversation`
+- `Message`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Relationships:
+
+- `User` has many `listings`, `buyerConversations`, `sellerConversations`, and `messages`
+- `Listing` belongs to a `seller` and has many `conversations`
+- `Conversation` belongs to a `listing`, `buyer`, and `seller`, and has many `messages`
+- `Message` belongs to a `conversation` and has one `sender`
+
+## Deployment Notes
+
+- Ensure environment variables are configured in your deployment platform
+- Re-run `npx prisma generate` after any schema change
+- Set Pusher credentials in production environment values
+- Use a secure `NEXTAUTH_SECRET`
+
+## Troubleshooting
+
+- If a route fails with missing `conversationId`, verify the dynamic route path uses `/messages/[conversationId]`
+- If Prisma reports validation errors, re-run `npx prisma generate`
+- If upload fails, confirm the Cloudinary upload preset and public credentials are valid
+
+## Made by Oleksandr Koniukh
