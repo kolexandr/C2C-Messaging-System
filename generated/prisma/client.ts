@@ -51,3 +51,13 @@ export type User = Prisma.UserModel
  * 
  */
 export type Listing = Prisma.ListingModel
+/**
+ * Model Conversation
+ * 
+ */
+export type Conversation = Prisma.ConversationModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel

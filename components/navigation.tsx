@@ -39,11 +39,12 @@ function DashboardIcon() {
   );
 }
 
-function CalendarIcon() {
+function MessageIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.8]">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75v3M16.5 3.75v3M4.5 8.25h15" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 5.25h10.5A2.25 2.25 0 0 1 19.5 7.5v10.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V7.5a2.25 2.25 0 0 1 2.25-2.25Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 6.75h15a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 19.5 18H6.75L3 21V9A2.25 2.25 0 0 1 4.5 6.75Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 9.75h9" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 13.5h6" />
     </svg>
   );
 }
@@ -97,8 +98,8 @@ export default function Navigation() {
   const navItems: NavItem[] = [
     { href: "/", label: "Home", icon: <HomeIcon /> },
     { href: "/dashboard", label: "Dashboard", icon: <DashboardIcon /> },
+    { href: "/messages", label: "Messages", icon: <MessageIcon />, authOnly: true },
     // { href: "/profile", label: "Profile", icon: <UserIcon /> },
-    { href: "/reservations", label: "Reservations", icon: <CalendarIcon />, authOnly: true },
   ];
 
   const visibleItems = navItems.filter((item) => !item.authOnly || isSignedIn);
@@ -115,7 +116,6 @@ export default function Navigation() {
           </span>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="text-sm font-semibold">Profile</span>
-            <span className="text-xs text-slate-400">Profile driven shop</span>
           </span>
         </Link>
 

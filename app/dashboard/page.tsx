@@ -9,10 +9,6 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  async function uploadImage(file: File){
-    const formData = new FormData();
-  }
-
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-16 text-white">
       <div className="mx-auto max-w-6xl space-y-10">

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import CloudinaryUpload from "./CloudinaryUpload";
 
 export default function CreateListingForm() {
   const [title, setTitle] = useState("");
@@ -93,14 +94,8 @@ export default function CreateListingForm() {
       </label>
 
       <label className="space-y-2 text-sm text-slate-200">
-        <span>Image URL</span>
-        <input
-          className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white outline-none transition focus:border-slate-500 focus:ring-4 focus:ring-slate-800"
-          value={imageUrl}
-          onChange={(event) => setImageUrl(event.target.value)}
-          placeholder="https://example.com/image.jpg"
-          type="url"
-        />
+        <span>Product image</span>
+        <CloudinaryUpload onImageUrlChange={setImageUrl} />
       </label>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
