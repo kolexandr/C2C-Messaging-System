@@ -32,6 +32,7 @@ Create a `.env` file at the project root with the following variables:
 
 ```dotenv
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 NEXTAUTH_SECRET="your-nextauth-secret"
 PUSHER_APP_ID="your-pusher-app-id"
 NEXT_PUBLIC_PUSHER_KEY="your-pusher-key"
@@ -42,8 +43,10 @@ NEXT_PUBLIC_PUSHER_CLUSTER="your-pusher-cluster"
 ### Required values
 
 - `DATABASE_URL` — PostgreSQL connection string
+- `DIRECT_URL` — direct PostgreSQL connection string used by Prisma CLI commands
 - `NEXTAUTH_SECRET` — secret for next-auth session encryption
 - `PUSHER_APP_ID`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER` — Pusher credentials for real-time messaging
+
 
 ## Setup
 
@@ -113,17 +116,5 @@ Relationships:
 - `Conversation` belongs to a `listing`, `buyer`, and `seller`, and has many `messages`
 - `Message` belongs to a `conversation` and has one `sender`
 
-## Deployment Notes
-
-- Ensure environment variables are configured in your deployment platform
-- Re-run `npx prisma generate` after any schema change
-- Set Pusher credentials in production environment values
-- Use a secure `NEXTAUTH_SECRET`
-
-## Troubleshooting
-
-- If a route fails with missing `conversationId`, verify the dynamic route path uses `/messages/[conversationId]`
-- If Prisma reports validation errors, re-run `npx prisma generate`
-- If upload fails, confirm the Cloudinary upload preset and public credentials are valid
 
 ## Made by Oleksandr Koniukh
